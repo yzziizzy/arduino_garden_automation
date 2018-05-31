@@ -30,6 +30,7 @@ const int WaterLenPtr = 8;
 const int WaterTimePtr = 12;
 const int BacklightLevelPtr = 16;
 
+char manualWater = 1; // active low relay
 
 const int PIN_COUNT = 14;
 char debounceEnable[PIN_COUNT];
@@ -174,18 +175,15 @@ void setup() {
 }
 
 
-int state = 1;
-
-
 
 void checkWater() {
   unsigned long ss = gettimes();
-  char st = 1;
+  char st = manualWater;
 
   DateTime now = RTC.now(); 
-  if(now.day() % 2) return;
+  //if(now.day() % 2) return;
 
-  if(ss > WaterTime && ss < (WaterTime + WaterLen)) {
+  if((now.day() % 2 == 0) && ss > WaterTime && ss < (WaterTime + WaterLen)) {
     st = 0;
     Serial.print("watering ");
     Serial.print(WaterTime + WaterLen - ss);
@@ -245,7 +243,7 @@ void loop() {
   static char didSave = 0;
   static char dispState = 0;
   if(pinPressed[10]) {
-    dispState = (dispState + 1) % 8;
+    dispState = (dispState + 1) % 9;
     pinPressed[10] = 0;
     up = 1;
     didSave = 0;
@@ -273,9 +271,13 @@ void loop() {
           lcd.setBacklight(BacklightLevel);
           break;
       case 6:
-          // set clock
+          // manual watering
+          manualWater = !manualWater;
           break;
       case 7:
+          // set clock
+          break;
+      case 8:
         if(pinPressed[11] && !pinPressed[12]) {
           // save
           saveData();
@@ -297,7 +299,7 @@ void loop() {
     up = 1;
   }
     
-  
+  if(dispState != 6) manualWater = 1;
 
   
 
@@ -376,6 +378,21 @@ void loop() {
   }
   else if(dispState == 6) {
     if(up) {
+       lcd.clear();
+       lcd.setCursor(0,0);
+       lcd.print("Manual Water");
+       lcd.setCursor(0,1);
+       if(manualWater) {
+         lcd.print(" turn on");
+       }
+       else {
+         lcd.print(" turn off");
+       }
+       up = 0;
+    }
+  }
+  else if(dispState == 7) {
+    if(up) {
       lcd.clear();
       lcd.setCursor(0,0);
       lcd.print("Set Clock"); 
@@ -384,7 +401,7 @@ void loop() {
       up = 0;
     }
   }
-  else if(dispState == 6) {
+  else if(dispState == 8) {
     if(up) {
       lcd.clear();
       lcd.setCursor(0,0);
