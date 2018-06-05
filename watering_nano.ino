@@ -109,7 +109,7 @@ unsigned long gettimes() {
 
 //Serial.printf("h: %d m: %d\n", hh, mm);
     
-    unsigned long s = now.second() + (now.minute() * 60) + (now.hour() * 3600);
+    unsigned long s = (unsigned long)now.second() + (mm * 60) + (hh * 3600);
 
     return s;
 }
@@ -121,7 +121,7 @@ unsigned long gettime() {
 
 //Serial.printf("h: %d m: %d\n", hh, mm);
     
-    unsigned long s = now.minute() + (now.hour() * 60);
+    unsigned long s = mm + (hh * 60);
 
     return s;
 }
@@ -185,9 +185,9 @@ void checkWater() {
 
   if((now.day() % 2 == 0) && ss > WaterTime && ss < (WaterTime + WaterLen)) {
     st = 0;
-    Serial.print("watering ");
-    Serial.print(WaterTime + WaterLen - ss);
-    Serial.println(" seconds left");
+    //Serial.print("watering ");
+    //Serial.print(WaterTime + WaterLen - ss);
+    //Serial.println(" seconds left");
   }
   
   
