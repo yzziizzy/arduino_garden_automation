@@ -180,10 +180,10 @@ void checkWater() {
   unsigned long ss = gettimes();
   char st = manualWater;
 
-  DateTime now = RTC.now(); 
+  //DateTime now = RTC.now(); 
   //if(now.day() % 2) return;
 
-  if((now.day() % 2 == 0) && ss > WaterTime && ss < (WaterTime + WaterLen)) {
+  if(ss > WaterTime && ss < (WaterTime + WaterLen)) {
     st = 0;
     //Serial.print("watering ");
     //Serial.print(WaterTime + WaterLen - ss);
@@ -312,18 +312,25 @@ void loop() {
       lcd.setCursor(0, 0);
       //lcd.print("                ");
       //lcd.setCursor(0, 0);
-      lcd.print(now.hour());
+      if(now.hour() < 10) lcd.print(" ");
+      lcd.print(now.hour() % 12);
       lcd.print(":");
+      if(now.minute() < 10) lcd.print("0");
       lcd.print(now.minute());
       lcd.print(":");
+      if(now.second() < 10) lcd.print("0");
       lcd.print(now.second());
+      if(now.hour() > 12) lcd.print(" PM");
+      else lcd.print(" AM");
       lcd.setCursor(0, 1);
-      if(now.day() % 2) {
+
+      
+      /*if(now.day() % 2) {
         lcd.print("water tomorrow");
       }
       else {
         lcd.print("watering today");
-      }
+      }*/
     }
   }
   else if(dispState == 1) {
